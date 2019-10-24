@@ -1,0 +1,215 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <locale.h>
+using namespace std;
+
+
+struct elemento // Criando o struct do Dado.
+{
+    int num;
+    struct elemento *prox;
+};
+
+typedef struct elemento Elem; 
+
+struct fila // Criando o scruct da Fila.
+{
+    struct elemento *inicio;
+    struct elemento *final;
+};
+
+typedef struct fila Fila;
+
+Fila* cria_Fila() // Função para iniciar a Fila.
+	{
+    Fila* fi = (Fila*) new Fila;
+    if(fi != NULL)
+	{
+        fi->final = NULL;
+        fi->inicio = NULL;
+    }
+    return fi;
+}
+
+void libera_Fila(Fila* fi)
+	{
+    if(fi != NULL)
+	{
+        Elem* no;
+        while(fi->inicio != NULL)
+		{
+            no = fi->inicio;
+            fi->inicio = fi->inicio->prox;
+            delete  no;
+        }
+        delete fi;
+    }
+}
+
+int consulta_Fila(Fila* fi, int valor) // Função de precaução para erros.
+	{
+    if(fi == NULL)
+	{
+        return 0;
+	}
+    if(fi->inicio == NULL)
+	{
+        return 0;
+	}
+    valor = fi->inicio->num;
+    return 1;
+}
+
+int insere_Fila(Fila* fi,int valor) // Função de inserção na Fila. 
+	{
+    if(fi == NULL)
+	{
+        return 0;
+		}
+    Elem *no = (Elem*) new Elem;
+    if(no == NULL)
+	{
+        return 0;
+		}
+    no->num = valor;
+    no->prox = NULL;
+    if(fi->final == NULL)
+	{
+        fi->inicio = no;
+	}
+    else
+	{
+        fi->final->prox = no;
+	}
+    fi->final = no;
+    return 1; // Previnir Erros.
+}
+
+int remove_Fila(Fila* fi) // Função de apagar na Fila.
+	{
+    if(fi == NULL)
+	{
+        return 0;
+	}
+    if(fi->inicio == NULL)
+	{
+        return 0;
+	}
+    Elem *no = fi->inicio;
+    fi->inicio = fi->inicio->prox;
+    if(fi->inicio == NULL)
+	{
+        fi->final = NULL;
+	}
+    free(no);
+    return 1;
+}
+
+int tamanho_Fila(Fila* fi) // Função de consulta ao tamanho da Fila.
+	{
+    if(fi == NULL)
+	{
+        return 0;
+	}
+    int cont=0;
+    Elem* no = fi->inicio;
+    while(no != NULL)
+	{
+        cont++;
+        no = no->prox;
+    }
+    return cont;
+}
+
+int Fila_vazia(Fila* fi) // Função de precaução para erros.
+	{
+    if(fi == NULL)
+	{
+        return 1;
+	}
+    if(fi->inicio == NULL)
+	{
+        return 1;
+	}
+    return 0;
+}
+
+
+int imprime_Fila(Fila* fi) // Função para imprimir os valores da Fila.
+{ 
+    if(fi == NULL)
+	{ 
+	return 0;   	
+    }
+    Elem* no = fi->inicio;
+    while(no != NULL)
+	{
+		cout << no->num;
+		cout << "\n";
+        no = no->prox;
+    }
+}
+
+int main()
+	{
+    setlocale(LC_ALL, "Portuguese");
+
+	int valor,insere,tamanho,remover,opt;
+    Fila *fi = cria_Fila();
+
+    do
+	{
+    cout << "\n0. Sair:\n";
+    cout << "1. Listar fila:\n";
+    cout << "2. Inserir na fila:\n";
+    cout << "3. Remover da fila:\n";
+    cout << "4. Tamanho da fila:\n";
+    cout << "\nOpção: ";
+    cin >> opt;
+    switch(opt)
+	{
+        case(0):
+        break;
+        case(1): // Impressão da Fila.
+        cout << "Fila:\n";
+        imprime_Fila(fi);
+        break;
+        case(2): // Inserção de dados na Fila.
+            cout << "Entre com um numero:\n";
+            cin >> valor;
+            insere = insere_Fila(fi,valor);
+            if(insere==1) 
+			{
+                cout << "Inserido com sucesso!\n";
+                system("pause");
+                system("cls");
+            }
+            else
+			{
+                cout << "Problemas ao inserir!\n";
+                system("pause");
+                system("cls");
+            }
+        break;
+        case(3): // Remover dados da Fila.
+            remover = remove_Fila(fi);
+            cout << "Removido com sucesso!\n";
+            system("pause");
+        	system("cls");
+        break;
+        case(4): // Mostrar o módulo do tamanho da Fila.
+            tamanho= tamanho_Fila(fi);
+            cout << "Quantidade de elementos da Fila:\n";
+            cout << tamanho;
+            system("pause");
+            system("cls");
+        break;
+        default:
+            cout << "Opção invalida!\n";
+        break;
+    }
+    }while(opt!=0);
+    return 0;
+}
